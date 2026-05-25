@@ -1,421 +1,942 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alquileres | Agendar Visita</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SISTEMA BFRM - Agendamiento de Visitas</title>
 
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- Tipografía -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Poppins', sans-serif; background-color:#f4f7f6; }
-    .header-hero {
-      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
-      color: white;
-      padding: 60px 0;
-      border-radius: 0 0 30px 30px;
-      margin-bottom: 40px;
+    /* =====================================================
+       BLOQUE CSS (Visual + Print)
+    ====================================================== */
+
+    :root{
+      --bg: #f6f7fb;
+      --card: rgba(255,255,255,.82);
+      --ink: #0b1220;
+      --muted: rgba(11,18,32,.65);
+      --primary: #0f172a;
+      --primary2: #1e3a8a;
+      --accent: #c5a880; /* oro viejo */
+      --accent2: #b45309;
+      --shadow: 0 18px 55px rgba(2,6,23,.12);
+      --shadow-soft: 0 10px 28px rgba(2,6,23,.08);
+      --radius-xl: 22px;
+      --radius-md: 14px;
+      --focus: 0 0 0 4px rgba(197,168,128,.35);
     }
 
-    .card-3d-container { perspective: 1000px; }
-    .card-3d {
-      transition: transform 0.45s ease, box-shadow 0.45s ease;
-      transform-style: preserve-3d;
-      cursor: pointer;
-      border: none;
-      border-radius: 15px;
-      overflow: hidden;
-    }
-    .card-3d:hover {
-      transform: rotateY(10deg) rotateX(5deg) translateZ(10px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    }
-    .card-3d-active {
-      transform: scale(0.99);
-      border: 3px solid #0d6efd !important;
-      box-shadow: 0 10px 25px rgba(13,110,253,0.25);
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+
+    body{
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(900px 450px at 15% 0%, rgba(197,168,128,.18), transparent 60%),
+                  radial-gradient(700px 320px at 85% 10%, rgba(30,58,138,.20), transparent 60%),
+                  var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    .section-title { letter-spacing: 0.2px; }
+    .focus-ring:focus-visible{ outline: none; box-shadow: var(--focus); border-color: rgba(197,168,128,.9) !important; }
 
-    .summary-box {
-      border: 1px solid rgba(0,0,0,0.08);
+    /* Navbar */
+    .topbar{
+      background: rgba(15,23,42,.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .brand-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.6rem;
+      padding:.55rem .9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(197,168,128,.35);
+      background: rgba(255,255,255,.06);
+      color:#fff;
+      font-weight: 900;
+      letter-spacing:.2px;
+    }
+
+    .social-icon{
+      width:42px; height:42px;
+      border-radius: 999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      text-decoration:none;
+    }
+    .social-icon:hover{
+      transform: translateY(-1px);
+      border-color: rgba(197,168,128,.6);
+      background: rgba(197,168,128,.14);
+      color: #fff;
+    }
+
+    /* Hero */
+    .hero{
+      background:
+        radial-gradient(900px 300px at 12% 0%, rgba(197,168,128,.28), transparent 55%),
+        radial-gradient(700px 260px at 95% 22%, rgba(30,58,138,.35), transparent 60%),
+        linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color:#fff;
+      border-radius: 0 0 28px 28px;
+      margin-bottom: 18px;
+      box-shadow: 0 20px 55px rgba(2,6,23,.18);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: repeating-linear-gradient(135deg, rgba(255,255,255,.08) 0 1px, transparent 1px 14px);
+      opacity:.25;
+      pointer-events:none;
+    }
+    .hero-inner{ position:relative; z-index:1; padding: 44px 0; }
+
+    .hero h1{ font-weight: 950; letter-spacing:.2px; }
+    .hero .lead{ color: rgba(255,255,255,.86) !important; font-weight:600; }
+
+    .badge-pill{
+      border: 1px solid rgba(197,168,128,.35);
+      background: rgba(197,168,128,.14);
+      color: #fdeccf;
+      border-radius:999px;
+      padding: .55rem .8rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.55rem;
+      font-weight: 800;
+      font-size:.92rem;
+      margin: .35rem .25rem 0;
+    }
+
+    /* Cards de terrenos */
+    .terreno-card{
+      background: var(--card);
+      border: 1px solid rgba(11,18,32,.08);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      overflow:hidden;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+      height:100%;
+    }
+    .terreno-card:hover{
+      transform: translateY(-3px);
+      border-color: rgba(197,168,128,.65);
+      box-shadow: var(--shadow);
+    }
+
+    .media-figure{ position:relative; background:#eef2f7; }
+    .media-figure img{ width:100%; height: 220px; object-fit: cover; display:block; }
+
+    .overlay-badges{
+      position:absolute;
+      left:14px; right:14px; top:14px;
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+      align-items:flex-start;
+      pointer-events:none;
+    }
+
+    .price-chip{
+      pointer-events:none;
+      background: rgba(11,18,32,.86);
+      color:#fff;
+      border:1px solid rgba(197,168,128,.25);
+      border-radius: 999px;
+      padding: .45rem .8rem;
+      font-weight: 900;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      font-size: .95rem;
+      white-space:nowrap;
+    }
+
+    .loc-chip{
+      pointer-events:none;
+      background: rgba(255,255,255,.9);
+      border:1px solid rgba(11,18,32,.08);
+      border-radius: 999px;
+      padding: .35rem .7rem;
+      font-weight: 800;
+      color: rgba(11,18,32,.78);
+      font-size: .85rem;
+      white-space:nowrap;
+    }
+
+    .card-bodyx{ padding: 16px 16px 18px; }
+
+    .terreno-title{ font-weight: 950; letter-spacing:.1px; margin-bottom:6px; }
+    .terreno-sub{ color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+
+    .feature-row{ display:flex; flex-wrap:wrap; gap:8px; }
+    .feature-badge{
+      border-radius: 999px;
+      padding: .45rem .65rem;
+      background: rgba(11,18,32,.035);
+      border: 1px solid rgba(11,18,32,.07);
+      color: rgba(11,18,32,.82);
+      font-weight: 800;
+      font-size: .86rem;
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+    }
+
+    .actions-row{
+      margin-top: 14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn-accent{
+      background: linear-gradient(135deg, rgba(197,168,128,.98) 0%, rgba(180,83,9,.95) 100%);
+      border:0;
+      color:#0b1220;
+      font-weight: 950;
       border-radius: 14px;
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(4px);
+      padding: 10px 14px;
+      box-shadow: 0 14px 40px rgba(180,83,9,.18);
+    }
+    .btn-accent:hover{ filter: brightness(.98); }
+
+    .btn-outline-soft{
+      background: rgba(255,255,255,.6);
+      border: 1px solid rgba(11,18,32,.12);
+      border-radius: 14px;
+      font-weight: 900;
+      color: rgba(11,18,32,.86);
+      padding: 10px 14px;
     }
 
-    /* Carousel dentro de la tarjeta */
-    .ad-carousel {
-      height: 220px;
-      background: #e9ecef;
+    /* Summary Box */
+    .summary-box{
+      border: 1px solid rgba(11,18,32,.10);
+      background: rgba(255,255,255,.72);
+      border-radius: 18px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-soft);
+      padding: 16px;
     }
-    .ad-carousel .carousel-item {
-      height: 220px;
+    .summary-left{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+    .summary-thumb{
+      width: 90px; height: 64px;
+      border-radius: 14px;
+      overflow:hidden;
+      background:#eef2f7;
+      border: 1px solid rgba(11,18,32,.08);
+      flex: 0 0 auto;
     }
-    .ad-carousel img {
-      height: 220px;
-      width: 100%;
-      object-fit: cover;
+    .summary-thumb img{ width:100%; height:100%; object-fit: cover; display:block; }
+
+    .summary-title{ font-weight: 950; }
+    .summary-sub{ color: var(--muted); font-weight: 700; margin-top: 4px; }
+    .summary-chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top: 10px; }
+    .summary-chip{
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 950;
+      border: 1px solid rgba(197,168,128,.35);
+      background: rgba(197,168,128,.12);
+      color: rgba(11,18,32,.88);
+      font-size: .88rem;
     }
 
-    /* Evitar que el hover/3D afecte demasiado al carousel */
-    .card-3d .carousel { pointer-events: auto; }
+    /* Form */
+    .contact-card{
+      border: 1px solid rgba(11,18,32,.10);
+      border-radius: var(--radius-xl);
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-soft);
+      padding: 18px;
+    }
 
-    /* Controles del carousel */
-    .ad-carousel .carousel-control-prev,
-    .ad-carousel .carousel-control-next {
-      width: 10%;
+    .form-label{ font-weight: 900; color: rgba(11,18,32,.82); }
+
+    /* Modal */
+    .modal-header.custom-success{ background:#198754 !important; color:#fff; }
+    .modal-header.custom-error{ background:#dc3545 !important; color:#fff; }
+
+    /* Print / PDF */
+    @media print{
+      /* Ocultar toda la UI comercial */
+      .no-print{ display:none !important; }
+
+      /* Mostrar únicamente el informe técnico */
+      #printArea{ display:block !important; }
+      #printAreaWeb{ display:none !important; }
+
+      /* Asegurar legibilidad */
+      body{ background:#fff !important; }
+      pre{
+        background:#0b1220 !important;
+        color:#e5e7eb !important;
+        border: 1px solid rgba(255,255,255,.12) !important;
+        box-shadow:none !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     }
-    .ad-carousel .carousel-control-prev-icon,
-    .ad-carousel .carousel-control-next-icon {
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35));
+
+    #printArea{ display:none; }
+    #printAreaWeb{ display:block; }
+
+    pre.report-pre{
+      background:#0b1220;
+      color:#e5e7eb;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-x:auto;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
+
+    .report-shell{
+      border: 1px solid rgba(11,18,32,.10);
+      border-radius: 22px;
+      background: rgba(255,255,255,.76);
+      box-shadow: var(--shadow-soft);
+      padding: 18px;
+    }
+
+    .report-title{ font-weight: 950; letter-spacing:.2px; }
+
+    /* Reducir movimientos en accesibilidad */
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; }
+    }
+
+    /* Smooth scroll */
+    html{ scroll-behavior:smooth; }
+
   </style>
 </head>
 <body>
-  <div class="header-hero text-center shadow">
-    <h1 class="fw-bold">Alquileres | Sistema de Agendamiento</h1>
-    <p class="lead mb-0">Elige un anuncio y agenda tu visita en minutos</p>
-  </div>
 
-  <div class="container pb-5">
-    <form id="formVisita" autocomplete="off">
+  <!-- =====================================================
+       BLOQUE HTML
+  ====================================================== -->
 
-      <!-- SECCIÓN 1 -->
-      <h3 class="mb-4 fw-bold text-secondary section-title">1. Selecciona tu anuncio</h3>
-      <div class="row g-4 card-3d-container mb-5">
-
-        <!-- D1 -->
-        <div class="col-md-4">
-          <div class="card card-3d shadow-sm h-100 option-card" data-anuncio="ALQUILER HABITACION AMOBLADA‼️ - SOPOCACHI">
-            <div id="carouselD1" class="carousel slide ad-carousel" data-bs-ride="carousel">
-              <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselD1" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Imagen 1"></button>
-                <button type="button" data-bs-target="#carouselD1" data-bs-slide-to="1" aria-label="Imagen 2"></button>
-              </div>
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img
-                    src="https://espacio-grupoinmobiliario.com/wp-content/uploads/2026/05/con-11-1170x785.jpeg"
-                    alt="Habitación amoblada - Sopocachi (1)"
-                  />
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://espacio-grupoinmobiliario.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-13-at-11.12.54-AM-1-584x438.jpeg"
-                    alt="Habitación amoblada - Sopocachi (2)"
-                  />
-                </div>
-              </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselD1" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselD1" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-              </button>
-            </div>
-
-            <div class="card-body">
-              <h5 class="card-title fw-bold">D1: Habitación Amoblada</h5>
-              <p class="card-text text-muted mb-2">
-                ☀️ Soleado • ✅ Dormitorio con Ropero • ✅ Cama • ✅ Wifi • ✅ Edificio con ascensor
-              </p>
-              <span class="badge bg-primary">Sopocachi</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- D2 -->
-        <div class="col-md-4">
-          <div class="card card-3d shadow-sm h-100 option-card" data-anuncio="ALQUILER HERMOSO DEPARTAMENTO ‼️ - MIRAFLORES (JARDÍN BOTÁNICO)">
-            <div id="carouselD2" class="carousel slide ad-carousel" data-bs-ride="carousel">
-              <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselD2" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Imagen 1"></button>
-                <button type="button" data-bs-target="#carouselD2" data-bs-slide-to="1" aria-label="Imagen 2"></button>
-              </div>
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img
-src="https://espacio-grupoinmobiliario.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-24-at-9.15.12-PM-1170x785.jpeg"
-                    alt="Departamento - Jardín Botánico (1)"
-                  />
-                </div>
-                <div class="carousel-item">
-                  <img
-src="https://espacio-grupoinmobiliario.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-24-at-9.15.12-PM-1-584x438.jpeg"
-                    alt="Departamento - Jardín Botánico (2)"
-                  />
-                </div>
-                <div class="carousel-item">
-                  <img
-src="https://espacio-grupoinmobiliario.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-24-at-9.15.12-PM-1-584x438.jpeg"
-                    alt="Departamento - Jardín Botánico (3)"
-                  />
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://drive.google.com/uc?export=view&id=1Ffgm3T6F2cEm8EDfVHnCUrnBkBcLj9t7"
-                    alt="Departamento - Jardín Botánico (4)"
-                  />
-                </div>
-                <div class="carousel-item">
-                  <img
-                    src="https://drive.google.com/uc?export=view&id=1Ffgm3T6F2cEm8EDfVHnCUrnBkBcLj9t7"
-                    alt="Departamento - Jardín Botánico (5)"
-                  />
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselD2" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselD2" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-              </button>
-            </div>
-
-            <div class="card-body">
-              <h5 class="card-title fw-bold">D2: Departamento</h5>
-              <p class="card-text text-muted mb-2">
-                ☀️ Soleado • ✅ 3 dormitorios con roperos empotrados • ✅ 2 baños • Living comedor amplio • Cocina Americana con gas
-                • No se acepta mascota • Lavandería privada • Opción Garaje
-              </p>
-              <span class="badge bg-success">Miraflores</span>
-            </div>
-          </div>
-        </div>
-
-
-
+  <header class="topbar sticky-top no-print">
+    <div class="container py-3 d-flex align-items-center justify-content-between gap-3 flex-wrap">
+      <div class="brand-pill">
+        <i class="bi bi-building" style="color: var(--accent);"></i>
+        <span>SISTEMA BFRM</span>
       </div>
 
-      <!-- Inputs ocultos -->
-      <input type="hidden" id="anuncioSeleccionado" name="anuncio" required />
-      <input type="hidden" id="codigoAnuncio" name="codigo_anuncio" required />
+      <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+        <a class="btn" style="background: rgba(255,255,255,.10); border:1px solid rgba(197,168,128,.30); color:#fff; font-weight:900;" href="https://drive.google.com/file/d/1-R-pn4XEH_r4C461E2y1a_VykRrysOrt/view?usp=sharing" target="_blank" aria-label="Abrir informe PDF">
+          <i class="bi bi-file-earmark-pdf me-2"></i>Informe PDF
+        </a>
 
-      <!-- SECCIÓN 2 -->
-      <h3 class="mb-4 fw-bold text-secondary section-title">2. Agendar visita</h3>
-      <div class="card p-4 shadow-sm border-0 mb-4" style="border-radius: 15px;">
-
-        <!-- RESUMEN -->
-        <div class="summary-box p-3 mb-4">
-          <div class="d-flex align-items-start gap-3">
-            <div class="flex-grow-1">
-              <div class="fw-semibold text-secondary">Anuncio seleccionado</div>
-              <div class="fw-bold fs-5" id="resumenAnuncio">(Elige un anuncio arriba)</div>
-              <div class="text-muted small">Te contactaremos para confirmar la hora de visita.</div>
-            </div>
-            <div class="text-end">
-              <div class="fw-semibold text-secondary">Contacto</div>
-              <div class="fw-bold" style="white-space: nowrap;">69839990</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Nombre Completo</label>
-            <input type="text" class="form-control" name="nombre" placeholder="Ej. Juan Pérez" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Correo Electrónico</label>
-            <input type="email" class="form-control" name="email" placeholder="juan@gmail.com" required>
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Teléfono (WhatsApp)</label>
-            <input type="tel" class="form-control" name="telefono" placeholder="Ej. 69839990" required>
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Fecha de Visita</label>
-            <input type="date" class="form-control" id="txtFecha" name="fecha" required>
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Hora Preferida</label>
-            <select class="form-select" name="hora" required>
-              <option value="">Selecciona una hora...</option>
-              <option value="08:00">08:00 AM</option>
-              <option value="10:00">10:00 AM</option>
-              <option value="12:00">12:00 PM</option>
-              <option value="14:00">02:00 PM</option>
-              <option value="16:00">04:00 PM</option>
-              <option value="18:00">06:00 PM</option>
-            </select>
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Disponibilidad</label>
-            <select class="form-select" name="disponibilidad" required>
-              <option value="">Selecciona...</option>
-              <option value="Mañana">Mañana</option>
-              <option value="Tarde">Tarde</option>
-              <option value="Noche">Noche</option>
-              <option value="Flexible">Flexible</option>
-            </select>
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">¿Te atiende alguien con guía/recepción?</label>
-            <select class="form-select" name="con_guia" required>
-              <option value="">Selecciona...</option>
-              <option value="Sí">Sí</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-
-          <div class="col-12">
-            <label class="form-label fw-semibold">Mensaje (preguntas, motivo o requisitos)</label>
-            <textarea class="form-control" name="mensaje" rows="3" placeholder="Ej. Busco ingresar la próxima semana, necesito ver ropero/ascensor, etc." required></textarea>
-          </div>
-
-          <div class="col-12">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="acepto_datos" id="acepto_datos" required>
-              <label class="form-check-label" for="acepto_datos">
-                Acepto el uso de mis datos para coordinar la visita.
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center mt-4">
-          <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm" id="btnEnviar">Agendar Visita</button>
-        </div>
-
+        <a class="social-icon" href="https://web.whatsapp.com/" target="_blank" aria-label="WhatsApp">
+          <i class="bi bi-whatsapp"></i>
+        </a>
+        <a class="social-icon" href="https://telegram.org/" target="_blank" aria-label="Telegram">
+          <i class="bi bi-telegram"></i>
+        </a>
+        <a class="social-icon" href="https://www.tiktok.com/login" target="_blank" aria-label="TikTok">
+          <i class="bi bi-tiktok"></i>
+        </a>
       </div>
-    </form>
+    </div>
+  </header>
+
+  <section class="hero no-print">
+    <div class="container hero-inner">
+      <div class="text-center">
+        <h1 class="mb-2">Agendar visita técnica de terrenos en La Paz</h1>
+        <p class="lead mb-0">Selecciona un terreno, revisa el detalle y luego agenda con tu contacto.</p>
+
+        <div class="mt-4 d-flex flex-wrap justify-content-center">
+          <span class="badge-pill"><i class="bi bi-shield-check"></i> Urb. Exclusiva</span>
+          <span class="badge-pill"><i class="bi bi-clock-history"></i> Horario validado</span>
+          <span class="badge-pill"><i class="bi bi-chat-left-dots"></i> Confirmación por WhatsApp</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container pb-5 no-print">
+
+    <div class="row g-4 mt-1">
+      <div class="col-12">
+        <h2 class="fw-bold mb-2" style="letter-spacing:.2px;">Catálogo de Terrenos</h2>
+        <p class="text-muted fw-semibold mb-4" style="max-width: 880px;">En cada publicación verás <b>precio</b> y <b>ubicación</b>. “Ver Detalle” abre una ventana con toda la información y opción de <b>Agendar</b>.</p>
+      </div>
+
+      <!-- Terreno 1 -->
+      <div class="col-12 col-md-4">
+        <article class="terreno-card" aria-label="Terreno 1">
+          <div class="media-figure">
+<img src="https://lh3.googleusercontent.com/d/18XPaEuoV3rxMVScAy048AT3eN2A39fv2" alt="Terreno Amplio en La Rinconada" loading="eager" referrerpolicy="no-referrer" />
+            <div class="overlay-badges">
+              <span class="price-chip">862.069 USD</span>
+              <span class="loc-chip"><i class="bi bi-geo-alt"></i> La Florida</span>
+            </div>
+          </div>
+
+          <div class="card-bodyx">
+            <div class="terreno-title">Terreno Amplio en La Rinconada</div>
+            <div class="terreno-sub">Av. La Rinconada, La Florida, Zona Sur, La Paz</div>
+
+            <div class="feature-row mb-3">
+              <span class="feature-badge"><i class="bi bi-rulers"></i> 958 m²</span>
+              <span class="feature-badge"><i class="bi bi-shield-check"></i> Urb. Exclusiva</span>
+              <span class="feature-badge"><i class="bi bi-graph-up"></i> Alta Valorización</span>
+              <span class="feature-badge"><i class="bi bi-tree"></i> Zona Sur</span>
+            </div>
+
+            <div class="actions-row">
+              <button class="btn btn-outline-soft flex-grow-1" type="button" data-detail-open="T1">
+                <i class="bi bi-eye me-2"></i>Ver Detalle
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Terreno 2 -->
+      <div class="col-12 col-md-4">
+        <article class="terreno-card" aria-label="Terreno 2">
+          <div class="media-figure">
+<img src="https://lh3.googleusercontent.com/d/1N4aPKNI3pHfQ8pIU0kFnDLtJglFQabHQ" alt="Terreno Urb. Tablones Vinto (Carreras)" loading="eager" referrerpolicy="no-referrer" />
+            <div class="overlay-badges">
+              <span class="price-chip">44.000 USD</span>
+              <span class="loc-chip"><i class="bi bi-geo-alt"></i> Mecapaca</span>
+            </div>
+          </div>
+
+          <div class="card-bodyx">
+            <div class="terreno-title">Terreno Urb. Tablones Vinto (Carreras)</div>
+            <div class="terreno-sub">Ex-Fundo Carreras, Manzano D, Lote 21, Mecapaca, La Paz</div>
+
+            <div class="feature-row mb-3">
+              <span class="feature-badge"><i class="bi bi-rulers"></i> 303 m²</span>
+              <span class="feature-badge"><i class="bi bi-droplet"></i> Agua y Luz</span>
+              <span class="feature-badge"><i class="bi bi-signpost-2"></i> A 5 min de Vía Principal</span>
+              <span class="feature-badge"><i class="bi bi-leaf"></i> Naturaleza</span>
+            </div>
+
+            <div class="actions-row">
+              <button class="btn btn-outline-soft flex-grow-1" type="button" data-detail-open="T2">
+                <i class="bi bi-eye me-2"></i>Ver Detalle
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Terreno 3 -->
+      <div class="col-12 col-md-4">
+        <article class="terreno-card" aria-label="Terreno 3">
+          <div class="media-figure">
+<img src="https://lh3.googleusercontent.com/d/1fgyVteTN3TMDNiuumLMfCdE55d-cZqzV" alt="Terreno Urb. Villa Linda (Avircato)" loading="eager" referrerpolicy="no-referrer" />
+            <div class="overlay-badges">
+              <span class="price-chip">25.000 USD</span>
+              <span class="loc-chip"><i class="bi bi-geo-alt"></i> Avircato</span>
+            </div>
+          </div>
+
+          <div class="card-bodyx">
+            <div class="terreno-title">Terreno Urb. Villa Linda (Avircato)</div>
+            <div class="terreno-sub">Ex Fundo Avircato, Cantón Mecapaca, Urb. Villa Linda, La Paz</div>
+
+            <div class="feature-row mb-3">
+              <span class="feature-badge"><i class="bi bi-rulers"></i> 300 m²</span>
+              <span class="feature-badge"><i class="bi bi-droplet-half"></i> Agua, Luz y Alcantarillado</span>
+              <span class="feature-badge"><i class="bi bi-geo"></i> A 11 min Plaza Valencia</span>
+              <span class="feature-badge"><i class="bi bi-building"></i> Apto Edificios</span>
+            </div>
+
+            <div class="actions-row">
+              <button class="btn btn-outline-soft flex-grow-1" type="button" data-detail-open="T3">
+                <i class="bi bi-eye me-2"></i>Ver Detalle
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Hidden inputs para backend -->
+    <input type="hidden" id="anuncioSeleccionado" name="anuncio" required />
+    <input type="hidden" id="codigoAnuncio" name="codigo_anuncio" required />
+
+    <!-- Summary + Contact Form -->
+    <section class="mt-5" id="contacto">
+      <div class="row g-3">
+        <div class="col-12">
+          <h2 class="fw-bold mb-2">Agendar Visita Técnica</h2>
+          <p class="text-muted fw-semibold mb-4">Completa tus datos de contacto. El sistema registra tu solicitud para coordinación por el canal correspondiente.</p>
+        </div>
+
+        <div class="col-12 col-lg-5">
+          <div class="summary-box">
+            <div class="summary-left">
+              <div class="summary-thumb">
+                <img id="summaryThumb" src="" alt="Miniatura" style="display:none" />
+              </div>
+              <div>
+                <div class="summary-title">Terreno seleccionado</div>
+                <div class="summary-sub" id="resumenAnuncio">Elige un terreno y presiona “Ver Detalle”.</div>
+                <div class="summary-chips">
+                  <span class="summary-chip" id="summaryCodigo">ID: —</span>
+                  <span class="summary-chip" id="summaryPrecio">Precio: —</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-7">
+          <div class="contact-card">
+            <form id="formVisita" autocomplete="off">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Nombre Completo</label>
+                  <input class="form-control focus-ring" type="text" name="nombre" placeholder="Ej. Juan Pérez" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Correo Electrónico</label>
+                  <input class="form-control focus-ring" type="email" name="email" placeholder="juan@gmail.com" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Teléfono (WhatsApp)</label>
+                  <input class="form-control focus-ring" type="tel" name="telefono" placeholder="Ej. 69839990" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Fecha de Visita</label>
+                  <input class="form-control focus-ring" type="date" id="txtFecha" name="fecha" required />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Hora Preferida</label>
+                  <select class="form-select focus-ring" name="hora" required>
+                    <option value="">Selecciona...</option>
+                    <option value="08:00">08:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="18:00">06:00 PM</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Disponibilidad</label>
+                  <select class="form-select focus-ring" name="disponibilidad" required>
+                    <option value="">Selecciona...</option>
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Noche">Noche</option>
+                    <option value="Flexible">Flexible</option>
+                  </select>
+                </div>
+
+                <div class="col-md-12">
+                  <label class="form-label">Mensaje (motivo o requisitos)</label>
+                  <textarea class="form-control focus-ring" name="mensaje" rows="3" placeholder="Ej. Necesito ver detalles para edificación, etc." required></textarea>
+                </div>
+
+                <div class="col-12 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                  <div class="form-check m-0">
+                    <input class="form-check-input" type="checkbox" name="acepto_datos" id="acepto_datos" required />
+                    <label class="form-check-label" for="acepto_datos" style="font-weight:800;">Acepto el uso de mis datos para coordinar la visita.</label>
+                  </div>
+
+                  <button type="submit" class="btn btn-accent px-4 py-2">
+                    <i class="bi bi-send me-2"></i>Agendar Visita
+                  </button>
+                </div>
+              </div>
+
+              <div class="text-muted small mt-3">Tu solicitud se valida contra disponibilidad en el servidor.</div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= Modal detalle/Agendar ======================= -->
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title fw-bold" id="detailTitle">Detalle del Terreno</h5>
+            <div class="text-muted fw-semibold" id="detailSub">—</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-4">
+            <div class="col-12 col-lg-5">
+              <div class="rounded-4 overflow-hidden" style="border:1px solid rgba(11,18,32,.08);">
+                <img id="detailImage" src="" alt="Imagen terreno" style="width:100%; height: 320px; object-fit:cover; background:#eef2f7;" />
+              </div>
+
+              <div class="mt-3 d-flex flex-wrap gap-2" id="detailChips"></div>
+            </div>
+
+            <div class="col-12 col-lg-7">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                  <div class="fw-bold">Descripción</div>
+                  <div class="text-muted fw-semibold">Información detallada del terreno</div>
+                </div>
+                <div class="text-end">
+                  <div class="fw-bold">Precio</div>
+                  <div class="fs-5 fw-bolder" id="detailPrice">—</div>
+                </div>
+              </div>
+
+              <p class="mt-3" id="detailDesc" style="color: rgba(11,18,32,.80); font-weight:600; line-height:1.65;"></p>
+
+              <div class="mt-3">
+                <div class="fw-bold">Ubicación</div>
+                <div class="text-muted fw-semibold" id="detailLocation">—</div>
+              </div>
+
+              <div class="mt-4 d-flex gap-2 flex-wrap">
+                <button class="btn btn-accent" type="button" id="btnAgendaFromDetail">
+                  <i class="bi bi-calendar-check me-2"></i>Agendar Visita
+                </button>
+                <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">
+                  Cerrar
+                </button>
+              </div>
+
+              <div class="alert alert-info mt-3 mb-0" role="alert" style="border-radius:16px; font-weight:700;">
+                Al presionar <b>Agendar</b> se selecciona el terreno automáticamente y te llevamos al formulario.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="me-auto text-muted fw-semibold" id="detailIdLine">ID: —</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Modal -->
+  <!-- ======================= Modal respuesta servidor ======================= -->
   <div class="modal fade" id="responseModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow">
-        <div class="modal-header text-white" id="modalHeader" style="background:#6c757d;">
+        <div class="modal-header text-white custom-error" id="modalHeader">
           <h5 class="modal-title fw-bold" id="modalTitle">Procesando...</h5>
         </div>
         <div class="modal-body text-center p-4" id="modalBody">
           <div class="spinner-border text-primary mb-3" role="status"></div>
           <p class="mb-0">Validando disponibilidad en el servidor...</p>
         </div>
-        <div class="modal-footer justify-content-center border-0" id="modalFooter" style="display:none;">
-          <!-- Botones dinámicos -->
-        </div>
+        <div class="modal-footer justify-content-center border-0" id="modalFooter" style="display:none;"></div>
       </div>
     </div>
   </div>
 
-  <!-- INFORME (para exportar a PDF sin Laravel) -->
-  <div class="container mb-5">
-    <div class="card shadow-sm border-0" style="border-radius: 16px;">
-      <div class="card-body p-4">
-        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
-          <div>
-            <h4 class="fw-bold mb-1">Informe del Sistema (HTML + Sheets + Apps Script)</h4>
-            <p class="text-muted mb-0">Se genera para PDF desde el navegador (botón “Imprimir/PDF”).</p>
-          </div>
-          <div class="text-end">
-            <button type="button" class="btn btn-primary" onclick="imprimirPDF()">Cargar en PDF</button>
-          </div>
+  <!-- ======================= Informe técnico: SOLO PDF ======================= -->
+  <div class="container py-4" id="printAreaWeb" style="display:none;">
+    <!-- placeholder opcional -->
+  </div>
+
+  <div class="container py-4" id="printArea" style="display:none;">
+    <div class="report-shell">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+        <div>
+          <div class="report-title fs-4">INFORME TÉCNICO - PROYECTO BFRM</div>
+          <div class="text-muted fw-semibold">Documentación académica para impresión / PDF</div>
         </div>
-
-        <hr/>
-
-        <div id="informeContenido">
-          <h5 class="fw-bold">1) Código HTM / Frontend</h5>
-          <p class="text-muted">Este archivo corresponde al frontend del sistema. Puedes revisar/guardar el código localmente desde <b>index.html</b>.</p>
-          <pre class="bg-light p-3 rounded overflow-auto" style="max-height:220px; font-size:12px;"><!-- index.html en tu repo --></pre>
-
-          <h5 class="fw-bold mt-4">2) Google Sheets (Sheets)</h5>
-          <p class="text-muted">Completa aquí el nombre de hojas y columnas que usas (ej: Reservas, Horarios, etc.).</p>
-          <pre class="bg-light p-3 rounded overflow-auto" style="max-height:220px; font-size:12px;"><!-- Pega tu estructura de Sheets: hojas y columnas --></pre>
-
-          <h5 class="fw-bold mt-4">3) Apps Script</h5>
-          <p class="text-muted">Completa aquí tu código Apps Script y/o la lógica de guardado/validación de horarios.</p>
-          <pre class="bg-light p-3 rounded overflow-auto" style="max-height:220px; font-size:12px;"><!-- Pega tu Apps Script aquí --></pre>
-
-          <h5 class="fw-bold mt-4">4) Enlace del sistema en GitHub</h5>
-          <p class="text-muted mb-1">Debería ir aquí el link al deploy/Pages o al repositorio funcionando:</p>
-          <pre class="bg-light p-3 rounded overflow-auto" style="max-height:140px; font-size:12px;">https://github.com/Beymar59254/Sistema-de-pedidos</pre>
-
-          <p class="text-muted mt-4 mb-0" style="font-size:12px;">Nota: “Cargar en PDF” usa la función de impresión del navegador. Para un PDF final, imprime como “Guardar como PDF”.</p>
+        <div class="text-end">
+          <div class="fw-bold">La Paz, Bolivia</div>
+          <div class="text-muted fw-semibold">Generado desde el navegador</div>
         </div>
       </div>
+
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div class="fw-bold">CARGAR EN PDF</div>
+        <button type="button" class="btn btn-dark no-print" onclick="window.print()">
+          <i class="bi bi-printer me-2"></i>Cargar en PDF
+        </button>
+      </div>
+
+      <hr />
+
+      <h5 class="fw-bold mb-2">1) Código HTM / Frontend</h5>
+      <pre class="report-pre"><!-- index.html -->
+Estructura general:
+- Carrusel/galería de terrenos (render directo con imágenes de Google Drive).
+- Botón “Ver Detalle” por terreno.
+- Modal de detalle + botón “Agendar” que:
+  1) selecciona el terreno (inputs ocultos anuncioSeleccionado y codigoAnuncio),
+  2) hace smooth scroll al formulario.
+- Formulario de contacto con submit interceptor.
+
+Inyección de eventos:
+- listeners para botones [data-detail-open].
+- listeners para submit del form #formVisita.
+
+Envío asíncrono al backend:
+fetch(URL_API, { method: 'POST', mode: 'cors', body: JSON.stringify(payload) })
+
+Manejo de respuesta:
+- SUCCESS => modal verde + botón a WhatsApp
+- CONFLICT => modal roja + botón de coordinación de alternativa</pre>
+
+      <h5 class="fw-bold mt-4 mb-2">2) Google Sheets (Estructura de columnas)</h5>
+      <pre class="report-pre">Hoja activa: Reservas
+Columnas mapeadas (11 columnas):
+[timestamp,
+ nombre,
+ email,
+ telefono,
+ anuncio,
+ codigo_anuncio,
+ fecha,
+ hora,
+ disponibilidad,
+ con_guia,
+ mensaje,
+ acepta_datos]</pre>
+
+      <h5 class="fw-bold mt-4 mb-2">3) Apps Script (Validación de cruce de horarios)</h5>
+      <pre class="report-pre">function doPost(e) {
+  const payload = JSON.parse(e.postData.contents);
+
+  // 1) doGet / endpoint opcional (healthcheck)
+  // 2) doPost
+  //    - Buscar en hoja Horarios registros con:
+  //      codigo_anuncio = payload.codigo_anuncio
+  //      fecha = payload.fecha
+  //      hora = payload.hora
+
+  //    - Si existe colisión => responder:
+  //      { status: "CONFLICT", whatsappConflictUrl: "..." }
+
+  //    - Si no existe => guardar reserva en Reservas
+  //      y generar whatsappUrl:
+  //      { status: "SUCCESS", whatsappUrl: "..." }
+}
+
+Bucle de verificación de colisiones (conceptual):
+for (let i=0; i < records.length; i++) {
+  const r = records[i];
+  if (r.codigo_anuncio === payload.codigo_anuncio &&
+      r.fecha === payload.fecha &&
+      r.hora === payload.hora) {
+    // colisión encontrada
+  }
+}</pre>
+
+      <h5 class="fw-bold mt-4 mb-2">4) Enlace del sistema funcionando en GitHub</h5>
+      <pre class="report-pre">https://github.com/Beymar59254/Sistema-de-pedidos</pre>
     </div>
   </div>
 
-
+  <!-- Librerías JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+  <!-- =====================================================
+       BLOQUE JAVASCRIPT (DOM + API)
+  ====================================================== -->
   <script>
-    document.getElementById('txtFecha').min = new Date().toISOString().split('T')[0];
+    // ===== JS App (resuelve selección + modal detalle + submit fetch) =====
 
-    const cards = document.querySelectorAll('.option-card');
-    const hiddenInput = document.getElementById('anuncioSeleccionado');
-    const hiddenCodigo = document.getElementById('codigoAnuncio');
-    const resumenAnuncio = document.getElementById('resumenAnuncio');
+    // ===== URL de Apps Script (REEMPLAZAR) =====
+    const URL_API = "REEMPLAZAR_CON_TU_URL_DE_APPS_SCRIPT";
 
-    const mapCodigo = (anuncioTexto) => {
-      if (anuncioTexto.includes('HABITACION')) return 'D1';
-      if (anuncioTexto.includes('DEPARTAMENTO')) return 'D2';
-      if (anuncioTexto.includes('GARZONIER')) return 'D3';
-      return '';
+    // ===== Datos terrenos (para detalle/selección) =====
+    const TERRENOS = {
+      T1: {
+        anuncioId: "110846",
+        codigo: "T1",
+        titulo: "Terreno Amplio en La Rinconada",
+        precio: "862.069 USD",
+        ubicacion: "Avenida La Rinconada, La Florida, Zona Sur, La Paz",
+        img: "https://drive.google.com/uc?export=view&id=18XPaEuoV3rxMVScAy048AT3eN2A39fv2",
+        descripcion:
+          "Terreno amplio en una de las urbanizaciones más exclusivas y consolidadas de La Paz. Ideal para residencias de alto nivel o inversión patrimonial de largo plazo. Con 958 m², brinda versatilidad para aprovechar diseño, áreas verdes y ambientes amplios, en una zona reconocida por exclusividad y calidad de vida.\n\nCaracterísticas: superficie 958 m², urbanización exclusiva, entorno residencial de alto nivel y excelente potencial de valorización.",
+        chips: ["📐 958 m²", "🛡️ Urb. Exclusiva", "📈 Alta Valorización", "🌳 Zona Sur"]
+      },
+      T2: {
+        anuncioId: "110556",
+        codigo: "T2",
+        titulo: "Terreno Urb. Tablones Vinto (Carreras)",
+        precio: "44.000 USD",
+        ubicacion: "Ex-Fundo Carreras, Manzano D, Lote 21, Mecapaca, La Paz",
+        img: "https://lh3.googleusercontent.com/d/1N4aPKNI3pHfQ8pIU0kFnDLtJglFQabHQ",
+        descripcion:
+          "Venta de terreno Ex-Fundo Carreras, Urbanización Tablones Vinto, Manzano D, Lote 21. Ubicado a solo 5 minutos del camino principal. Cuenta con servicios básicos (agua, luz) y zona en pleno crecimiento ideal para viviendas, paz y naturaleza.\n\nSuperficie 303 m². Ideal para quienes buscan un entorno privilegiado con comodidad.",
+        chips: ["📐 303 m²", "💧 Agua y Luz", "🛣️ A 5 min de Vía Principal", "🍃 Naturaleza"]
+      },
+      T3: {
+        anuncioId: "110492",
+        codigo: "T3",
+        titulo: "Terreno Urb. Villa Linda (Avircato)",
+        precio: "25.000 USD",
+        ubicacion: "Ex Fundo Avircato, Cantón Mecapaca, Urb. Villa Linda, La Paz",
+        img: "https://drive.google.com/uc?export=view&id=1fgyVteTN3TMDNiuumLMfCdE55d-cZqzV",
+        descripcion:
+          "Venta de terreno Mecapaca, Avircato, Urbanización Villa Linda. Ubicado a 11 minutos de la plaza de Valencia. Cuenta con servicios básicos (agua, luz y alcantarillado). Entorno privilegiado ideal para viviendas o edificios.\n\nSuperficie 300 m². Zona en crecimiento, paz, naturaleza y calidad de vida.",
+        chips: ["📐 300 m²", "🚰 Agua, Luz y Alcantarillado", "🏛️ A 11 min Plaza Valencia", "🏗️ Apto Edificios"]
+      }
     };
 
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        cards.forEach(c => c.classList.remove('card-3d-active'));
-        card.classList.add('card-3d-active');
+    // ===== Referencias DOM =====
+    const hiddenAnuncio = document.getElementById('anuncioSeleccionado');
+    const hiddenCodigo = document.getElementById('codigoAnuncio');
 
-        const anuncio = card.getAttribute('data-anuncio');
-        hiddenInput.value = anuncio;
-        hiddenCodigo.value = mapCodigo(anuncio);
-        resumenAnuncio.textContent = anuncio;
+    const resumenAnuncio = document.getElementById('resumenAnuncio');
+    const summaryThumb = document.getElementById('summaryThumb');
+    const summaryCodigo = document.getElementById('summaryCodigo');
+    const summaryPrecio = document.getElementById('summaryPrecio');
+
+    const detailModalEl = document.getElementById('detailModal');
+    const detailModal = new bootstrap.Modal(detailModalEl);
+
+    const detailTitle = document.getElementById('detailTitle');
+    const detailSub = document.getElementById('detailSub');
+    const detailImage = document.getElementById('detailImage');
+    const detailChips = document.getElementById('detailChips');
+    const detailDesc = document.getElementById('detailDesc');
+    const detailPrice = document.getElementById('detailPrice');
+    const detailLocation = document.getElementById('detailLocation');
+    const detailIdLine = document.getElementById('detailIdLine');
+    const btnAgendaFromDetail = document.getElementById('btnAgendaFromDetail');
+
+    const form = document.getElementById('formVisita');
+    const modalResponse = new bootstrap.Modal(document.getElementById('responseModal'));
+
+    // ===== Fecha mínima =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const txtFecha = document.getElementById('txtFecha');
+      if (txtFecha) txtFecha.min = new Date().toISOString().split('T')[0];
+    });
+
+    // ===== Selección automática =====
+    function seleccionarTerreno(code){
+      const t = TERRENOS[code];
+      if(!t) return;
+
+      hiddenAnuncio.value = t.anuncioId;
+      hiddenCodigo.value = t.codigo;
+
+      // Summary
+      resumenAnuncio.textContent = t.titulo;
+      summaryCodigo.textContent = `ID: ${t.anuncioId} (${t.codigo})`;
+      summaryPrecio.textContent = `Precio: ${t.precio}`;
+
+      summaryThumb.src = t.img;
+      summaryThumb.style.display = 'block';
+
+      // Scroll suave al formulario
+      document.getElementById('contacto').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ===== Apertura modal detalle =====
+    function abrirDetalle(code){
+      const t = TERRENOS[code];
+      if(!t) return;
+
+      detailTitle.textContent = t.titulo;
+      detailSub.textContent = `ID: ${t.anuncioId} · Código: ${t.codigo}`;
+      detailImage.src = t.img;
+      detailDesc.textContent = t.descripcion;
+      detailPrice.textContent = t.precio;
+      detailLocation.textContent = t.ubicacion;
+      detailIdLine.textContent = `ID: ${t.anuncioId} · ${t.codigo}`;
+
+      detailChips.innerHTML = '';
+      t.chips.forEach(ch => {
+        const span = document.createElement('span');
+        span.className = 'feature-badge me-1 mb-1';
+        span.textContent = ch;
+        detailChips.appendChild(span);
+      });
+
+      // Al presionar Agendar dentro del modal
+      btnAgendaFromDetail.onclick = () => {
+        seleccionarTerreno(code);
+        detailModal.hide();
+      };
+
+      detailModal.show();
+    }
+
+    document.querySelectorAll('[data-detail-open]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.getAttribute('data-detail-open');
+        abrirDetalle(code);
       });
     });
 
-    const form = document.getElementById('formVisita');
-    const modal = new bootstrap.Modal(document.getElementById('responseModal'));
-
-    const URL_API = "REEMPLAZAR_CON_TU_URL_DE_APPS_SCRIPT";
-
+    // ===== Submit (fetch) =====
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      if (!hiddenInput.value) {
-        alert('Por favor, selecciona un anuncio arriba.');
+      if(!hiddenAnuncio.value || !hiddenCodigo.value){
+        alert('Selecciona un terreno desde “Ver Detalle / Agendar”.');
         return;
       }
 
-      document.getElementById('modalHeader').style.background = '#6c757d';
-      document.getElementById('modalTitle').innerText = 'Conectando al servidor';
-      document.getElementById('modalBody').innerHTML = `<div class="spinner-border text-primary mb-3"></div><p>Verificando disponibilidad y registrando tu solicitud...</p>`;
-      document.getElementById('modalFooter').style.display = 'none';
-      modal.show();
+      // Modal loading
+document.getElementById('modalTitle').textContent = 'Conectando al servidor';
+      const modalHeader = document.getElementById('modalHeader');
+      modalHeader.classList.remove('custom-success');
+      modalHeader.classList.add('custom-error');
 
-      const formData = new FormData(form);
+      document.getElementById('modalBody').innerHTML = `
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <p class="mb-0">Validando disponibilidad y registrando tu solicitud...</p>
+      `;
+      const modalFooter = document.getElementById('modalFooter');
+      modalFooter.style.display = 'none';
+      modalFooter.innerHTML = '';
+      modalResponse.show();
+
+      const fd = new FormData(form);
+
       const payload = {
-        anuncio: formData.get('anuncio'),
-        codigo_anuncio: formData.get('codigo_anuncio'),
-        nombre: formData.get('nombre'),
-        email: formData.get('email'),
-        telefono: formData.get('telefono'),
-        fecha: formData.get('fecha'),
-        hora: formData.get('hora'),
-        disponibilidad: formData.get('disponibilidad'),
-        con_guia: formData.get('con_guia'),
-        mensaje: formData.get('mensaje'),
-        acepta_datos: formData.get('acepto_datos')
+        anuncio: fd.get('anuncio') || hiddenAnuncio.value,
+        codigo_anuncio: hiddenCodigo.value,
+        nombre: fd.get('nombre'),
+        email: fd.get('email'),
+        telefono: fd.get('telefono'),
+        fecha: fd.get('fecha'),
+        hora: fd.get('hora'),
+        disponibilidad: fd.get('disponibilidad'),
+        con_guia: fd.get('con_guia') || 'No',
+        mensaje: fd.get('mensaje'),
+        acepta_datos: fd.get('acepto_datos') ? 'true' : 'false'
       };
 
-      try {
+      try{
         const response = await fetch(URL_API, {
           method: 'POST',
           mode: 'cors',
@@ -424,52 +945,56 @@ src="https://espacio-grupoinmobiliario.com/wp-content/uploads/2026/05/WhatsApp-I
 
         const result = await response.json();
 
-        if (result.status === 'SUCCESS') {
-          document.getElementById('modalHeader').style.background = '#198754';
-          document.getElementById('modalTitle').innerText = '¡Visita Confirmada!';
+        if(result.status === 'SUCCESS'){
+          modalHeader.classList.remove('custom-error');
+          modalHeader.classList.add('custom-success');
+          document.getElementById('modalTitle').textContent = '¡Visita Confirmada!';
           document.getElementById('modalBody').innerHTML = `
             <p class="fs-5 text-success fw-bold mb-2">Solicitud registrada ✅</p>
-            <p>Hola <strong>${payload.nombre}</strong>, se agendó <strong>${payload.codigo_anuncio}</strong> para <strong>${payload.fecha}</strong> a las <strong>${payload.hora}</strong>.</p>
-            <p class="text-muted small mb-0">Si aplica, se enviará confirmación por WhatsApp/Correo.</p>
+            <p class="mb-0">${payload.nombre}, se agendó <b>${payload.codigo_anuncio}</b> para <b>${payload.fecha}</b> a las <b>${payload.hora}</b>.</p>
           `;
-          document.getElementById('modalFooter').innerHTML = `
-            <a href="${result.whatsappUrl}" target="_blank" class="btn btn-success px-4">Abrir WhatsApp</a>
+
+          modalFooter.style.display = 'flex';
+          modalFooter.innerHTML = `
+            <a class="btn btn-success px-4" href="${result.whatsappUrl || '#'}" target="_blank">
+              <i class="bi bi-whatsapp me-2"></i>Abrir WhatsApp
+            </a>
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
           `;
-          document.getElementById('modalFooter').style.display = 'flex';
-          form.reset();
-          hiddenInput.value = '';
-          hiddenCodigo.value = '';
-          resumenAnuncio.textContent = '(Elige un anuncio arriba)';
-          cards.forEach(c => c.classList.remove('card-3d-active'));
+
         } else {
-          document.getElementById('modalHeader').style.background = '#dc3545';
-          document.getElementById('modalTitle').innerText = 'Horario No Disponible';
+          // CONFLICT (o cualquier status distinto)
+          modalHeader.classList.remove('custom-success');
+          modalHeader.classList.add('custom-error');
+          document.getElementById('modalTitle').textContent = 'Horario no disponible';
           document.getElementById('modalBody').innerHTML = `
-            <p class="fs-5 text-danger fw-bold">Cruce de Horario Detectado</p>
-            <p>Lo sentimos, para <strong>${payload.codigo_anuncio}</strong> en <strong>${payload.fecha}</strong> a las <strong>${payload.hora}</strong> ya existe una reserva.</p>
-            <p class="mb-0">Coordinemos otra hora/fecha.</p>
+            <p class="fs-5 text-danger fw-bold mb-2">Cruce de horarios detectado</p>
+            <p class="mb-0">Ya existe una reserva para <b>${payload.codigo_anuncio}</b> en <b>${payload.fecha}</b> a las <b>${payload.hora}</b>.</p>
           `;
-          document.getElementById('modalFooter').innerHTML = `
-            <a href="${result.whatsappConflictUrl}" target="_blank" class="btn btn-warning text-dark px-4">Coordinar Alternativa</a>
+
+          modalFooter.style.display = 'flex';
+          modalFooter.innerHTML = `
+            <a class="btn btn-warning text-dark px-4" href="${result.whatsappConflictUrl || '#'}" target="_blank">
+              <i class="bi bi-chat-dots me-2"></i>Coordinar alternativa
+            </a>
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Buscar otro horario</button>
           `;
-          document.getElementById('modalFooter').style.display = 'flex';
         }
-      } catch (err) {
-        document.getElementById('modalHeader').style.background = '#dc3545';
-        document.getElementById('modalTitle').innerText = 'Error';
-        document.getElementById('modalBody').innerHTML = `<p class="mb-0">Falló la conexión con el servidor. Intenta nuevamente.</p>`;
-        document.getElementById('modalFooter').style.display = 'flex';
-        document.getElementById('modalFooter').innerHTML = `<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>`;
+
+      }catch(err){
+        modalHeader.classList.remove('custom-success');
+        modalHeader.classList.add('custom-error');
+        document.getElementById('modalTitle').textContent = 'Error';
+        document.getElementById('modalBody').innerHTML = `
+          <p class="mb-0">Falló la conexión con el servidor. Intenta nuevamente.</p>
+        `;
+        const modalFooter = document.getElementById('modalFooter');
+        modalFooter.style.display = 'flex';
+        modalFooter.innerHTML = `<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>`;
       }
     });
-
-    function imprimirPDF(){
-      window.print();
-    }
-
   </script>
+
 </body>
 </html>
 
